@@ -435,7 +435,7 @@ For additional security, ensure to log out from shared or public computers to pr
 1. **Open Swagger UI**
    - Navigate to `http://localhost:5046/index.html` in your browser.
    ![Swagger UI](path/to/swagger-ui.png)
-
+   //
 2. **Authenticate**
    - Obtain a JWT token using the `Login` endpoint as described above.
    ![Swagger Auth Button](path/to/swagger-auth-button.png)
