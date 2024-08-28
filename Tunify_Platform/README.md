@@ -409,7 +409,6 @@ For additional security, ensure to log out from shared or public computers to pr
 
 1. **Set Up Postman**
    - Open Postman and create a new request.
-   ![Postman Setup](path/to/postman-setup.png)
 
 2. **Authenticate**
    - Obtain a JWT token using the `Login` endpoint.
@@ -427,34 +426,28 @@ For additional security, ensure to log out from shared or public computers to pr
        }
        ```
      - Copy the `Token` from the response.
-   ![Postman Login Request](path/to/postman-login-request.png)
+   ![Postman Login Request](https://github.com/nooralbonne/Tunify_Platform/blob/master/Tunify_Platform/Assets/accessAdminPostman.jpg)
 
 
 ### Accessing Admin Features via Swagger UI
 
 1. **Open Swagger UI**
    - Navigate to `http://localhost:5046/index.html` in your browser.
-   ![Swagger UI](path/to/swagger-ui.png)
+   ![Swagger UI](https://github.com/nooralbonne/Tunify_Platform/blob/master/Tunify_Platform/Assets/SWAGGERui.jpg)
    //
 2. **Authenticate**
    - Obtain a JWT token using the `Login` endpoint as described above.
-   ![Swagger Auth Button](path/to/swagger-auth-button.png)
+   ![Swagger Auth Button](https://github.com/nooralbonne/Tunify_Platform/blob/master/Tunify_Platform/Assets/AuthButton.jpg)
 
 3. **Add Authorization Header**
    - In Swagger UI, click on the "Authorize" button.
    - Enter the token in the format `Bearer <your-token>` and click "Authorize".
-   ![Swagger Auth Modal](path/to/swagger-auth-modal.png)
+   ![Swagger Auth Modal](https://github.com/nooralbonne/Tunify_Platform/blob/master/Tunify_Platform/Assets/Auth%20Button.jpg)
 
 4. **Test Admin Endpoints**
    - Once authorized, test admin endpoints directly from Swagger UI.
    - Find the admin endpoints in the Swagger documentation and make requests to them with the token applied.
-   ![Swagger Admin Request](path/to/swagger-admin-request.png)
-
-## Notes
-
-- Replace `path/to/` with the actual paths to your screenshots.
-- Ensure that the JWT token used has appropriate claims and roles to access the admin features.
-- Update the `your-api-url` placeholder with the actual URL of your API.
+   ![Swagger Admin Request](https://github.com/nooralbonne/Tunify_Platform/blob/master/Tunify_Platform/Assets/accessAdminSwaggerUI.jpg)
 
 ---
 
