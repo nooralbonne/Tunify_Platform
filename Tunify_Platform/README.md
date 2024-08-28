@@ -278,6 +278,184 @@ To log out of your account:
 
 For additional security, ensure to log out from shared or public computers to protect your account.
 
+
+## JWT-Based Authentication and Authorization
+
+### Setting Up JWT Authentication
+
+1. **Install Required Package**
+   - Use NuGet Package Manager to install `Microsoft.AspNetCore.Authentication.JwtBearer`.
+
+2. **Configure JWT Authentication**
+   - In `Program.cs`, configure JWT authentication:
+
+     ```csharp
+     builder.Services.AddAuthentication(
+         options =>
+         {
+             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+         }
+     ).AddJwtBearer(
+         options =>
+         {
+             options.TokenValidationParameters = JwtTokenService.ValidateToken(builder.Configuration);
+         }
+     );
+     ```
+
+   - Ensure the authentication and authorization middleware is added:
+
+     ```csharp
+     app.UseAuthentication();
+     app.UseAuthorization();
+     ```
+
+### Repository Interfaces and Services
+
+1. **Extend IAccount Interface**
+   - Add a method for generating JWT tokens:
+
+     ```csharp
+     Task<string> GenerateJwtToken(ApplicationUser user);
+     ```
+
+2. **Implement JwtTokenService**
+   - Handle token creation, validation, and claims in `JwtTokenService`.
+
+3. **Update IdentityAccountService**
+   - Implement `GenerateJwtToken` method in `IdentityAccountService` to create JWT tokens.
+
+### Updating AccountController
+
+1. **Modify Login Action**
+   - Generate and return a JWT token on successful authentication:
+
+     ```csharp
+     [HttpPost("Login")]
+     public async Task<ActionResult<LoginDto>> Login(LoginDto loginDto)
+     {
+         var user = await _accountService.UserAuthentication(loginDto.Username, loginDto.Password);
+
+         if (user == null)
+         {
+             return Unauthorized();
+         }
+
+         var token = await _accountService.GenerateJwtToken(user);
+         user.Token = token;
+
+         return Ok(user);
+     }
+     ```
+
+2. **Include Claims in Token**
+   - Ensure the JWT token includes necessary claims such as user roles and custom claims.
+
+### Securing API Endpoints
+
+1. **Use [Authorize] Attributes**
+   - Secure endpoints using `[Authorize]` attributes:
+
+     ```csharp
+     [Authorize]
+     [HttpGet("Profile")]
+     public async Task<ActionResult<LoginDto>> Profile()
+     {
+         return await _accountService.UserProfile(User);
+     }
+     ```
+
+2. **Implement Role-Based and Policy-Based Authorization**
+   - Ensure that endpoints are protected based on user roles and claims as needed.
+
+### Handling Claims and Roles
+
+1. **Seed Roles and Users**
+   - Define roles and seed initial data in `TunifyDbContext`:
+
+     ```csharp
+     protected override void OnModelCreating(ModelBuilder modelBuilder)
+     {
+         base.OnModelCreating(modelBuilder);
+
+         modelBuilder.Entity<IdentityRole>().HasData(
+             new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
+             new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER" }
+         );
+
+         modelBuilder.Entity<ApplicationUser>().HasData(
+             new ApplicationUser
+             {
+                 Id = "1",
+                 UserName = "admin",
+                 NormalizedUserName = "ADMIN",
+                 Email = "admin@tunify.com",
+                 NormalizedEmail = "ADMIN@TUNIFY.COM",
+                 PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(null, "AdminPassword")
+             }
+         );
+     }
+     ```
+
+2. **Run Migrations**
+   - Ensure migrations are applied to update the database with roles and claims.
+
+
+ - ## Access Admin Features
+
+### Accessing Admin Features via Postman
+
+1. **Set Up Postman**
+   - Open Postman and create a new request.
+   ![Postman Setup](path/to/postman-setup.png)
+
+2. **Authenticate**
+   - Obtain a JWT token using the `Login` endpoint.
+     - **POST** `http://localhost:5046/api/Account/Login`
+     - **Body (JSON):**
+       ```json
+       {
+        "id": "79",
+       "userName": "Admin",
+       "password": "34827@ADFLGMjnjkn",
+       "roles": [
+       "Admin"
+         ],
+       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRhMjhhOTA5LWJmZWUtNGZjZC1hMjg2LTYwYTZkZjU2Y2U5YSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IkFkbWluQGdtYWlsLmNvbSIsIkFzcE5ldC5JZGVudGl0eS5TZWN1cml0eVN0YW1wIjoiVkRaUEtWNVlKV1NMN05XN1RCV0VMRFNOR0NSUjdVTFAiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyNDg0MTYwNH0.tmiWUqXr0ZTTbfO8A2N8QMh8OtC0mAYfW561j3DQk0E"
+       }
+       ```
+     - Copy the `Token` from the response.
+   ![Postman Login Request](path/to/postman-login-request.png)
+
+
+### Accessing Admin Features via Swagger UI
+
+1. **Open Swagger UI**
+   - Navigate to `http://localhost:5046/index.html` in your browser.
+   ![Swagger UI](path/to/swagger-ui.png)
+
+2. **Authenticate**
+   - Obtain a JWT token using the `Login` endpoint as described above.
+   ![Swagger Auth Button](path/to/swagger-auth-button.png)
+
+3. **Add Authorization Header**
+   - In Swagger UI, click on the "Authorize" button.
+   - Enter the token in the format `Bearer <your-token>` and click "Authorize".
+   ![Swagger Auth Modal](path/to/swagger-auth-modal.png)
+
+4. **Test Admin Endpoints**
+   - Once authorized, test admin endpoints directly from Swagger UI.
+   - Find the admin endpoints in the Swagger documentation and make requests to them with the token applied.
+   ![Swagger Admin Request](path/to/swagger-admin-request.png)
+
+## Notes
+
+- Replace `path/to/` with the actual paths to your screenshots.
+- Ensure that the JWT token used has appropriate claims and roles to access the admin features.
+- Update the `your-api-url` placeholder with the actual URL of your API.
+
 ---
 
 For further customization or advanced usage, refer to the [ASP.NET Core Identity Documentation](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity).
