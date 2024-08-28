@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Tunify_Platform.Models.DTO;
 using Tunify_Platform.Repositories.Interfaces;
-using Tunify_Platform.Repositories.Services;
 
 namespace Tunify_Platform.Controllers
 {
@@ -66,12 +65,11 @@ namespace Tunify_Platform.Controllers
             return Ok(new { message = "Logged out successfully." });
         }
 
-        //[Authorize(Roles = "Admin")] // only logged in users can have access to the profile
+        //[Authorize(Roles = "Admin")] // only logged-in users can have access to the profile
         [HttpGet("Profile")]
         public async Task<ActionResult<LoginDto>> Profile()
         {
-            return await _accountService.userProfile(User);
+            return await _accountService.UserProfile(User); // Updated to use 'UserProfile' with uppercase 'U'
         }
-
     }
 }

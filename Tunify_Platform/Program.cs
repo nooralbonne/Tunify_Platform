@@ -126,3 +126,15 @@ namespace Tunify_Platform
 //  "email": "noor@gmail.com",
 //  "password": "dsldsSASA423423$$$$$$$$$$$$$$$$$$$$655656"
 //}
+
+
+
+//{
+//    "id": "79",
+//  "userName": "Admin",
+//  "email": "Admin@gmail.com",
+//  "password": "34827@ADFLGMjnjkn",
+//  "roles": [
+//    "Admin"
+//  ]
+//}

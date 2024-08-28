@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Tunify_Platform.Models;
 
@@ -123,6 +124,27 @@ namespace Tunify_Platform.Data
                 new PlaylistSong { PlaylistSongId = 3, PlaylistId = 3, SongId = 3 },
                 new PlaylistSong { PlaylistSongId = 4, PlaylistId = 4, SongId = 4 }
             );
+
+            seedRoles(modelBuilder, "Admin", "create", "update", "delete");
+            seedRoles(modelBuilder, "User", "update");
+        }
+
+        private void seedRoles(ModelBuilder modelBuilder, string roleName, params string[] permission)
+        {
+            var role = new IdentityRole
+            {
+                Id = roleName.ToLower(),
+                Name = roleName,
+                NormalizedName = roleName.ToUpper(),
+                ConcurrencyStamp = Guid.Empty.ToString()
+            };
+
+            // add claims for the users
+            // complete
+
+            modelBuilder.Entity<IdentityRole>().HasData(role);
+
+
         }
     }
 }

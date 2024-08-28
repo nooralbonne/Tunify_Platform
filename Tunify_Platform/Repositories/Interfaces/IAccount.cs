@@ -6,16 +6,13 @@ namespace Tunify_Platform.Repositories.Interfaces
 {
     public interface IAccount
     {
-        // Add register
-        public Task<RegisterDto> Register(RegisterDto registerdUserDto, ModelStateDictionary modelState);
+        // Register a new user
+        Task<RegisterDto> Register(RegisterDto registeredUserDto, ModelStateDictionary modelState);
 
-        // Add login 
-        public Task<LoginDto> UserAuthentication(string username, string password);
+        // Authenticate a user
+        Task<LoginDto> UserAuthentication(string username, string password);
 
-        // add user profile 
-        public Task<LoginDto> userProfile(ClaimsPrincipal claimsPrincipal);
-
+        // Retrieve user profile
+        Task<LoginDto> UserProfile(ClaimsPrincipal claimsPrincipal); // Updated to PascalCase
     }
-
 }
-

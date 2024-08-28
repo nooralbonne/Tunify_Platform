@@ -30,10 +30,14 @@ namespace Tunify_Platform.Repositories.Services
 
             if (result.Succeeded)
             {
+                // add roles to the new registered user
+                await _userManager.AddToRolesAsync(user, registeredUserDto.Roles);
+
                 return new RegisterDto()
                 {
                     Id = user.Id,
-                    UserName = user.UserName
+                    UserName = user.UserName,
+                    Roles = await _userManager.GetRolesAsync(user)
                 };
             }
 
@@ -72,7 +76,7 @@ namespace Tunify_Platform.Repositories.Services
             return null;
         }
 
-        public async Task<LoginDto> userProfile(ClaimsPrincipal claimsPrincipal)
+        public async Task<LoginDto> UserProfile(ClaimsPrincipal claimsPrincipal)
         {
             var user = await _userManager.GetUserAsync(claimsPrincipal);
             if (user == null)
